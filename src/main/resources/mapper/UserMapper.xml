@@ -87,6 +87,9 @@
       <if test="thirdPartId != null">
         third_part_id,
       </if>
+      <if test="email != null">
+        email,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -109,6 +112,9 @@
       </if>
       <if test="thirdPartId != null">
         #{thirdPartId,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -136,6 +142,9 @@
       </if>
       <if test="thirdPartId != null">
         third_part_id = #{thirdPartId,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}

@@ -4,6 +4,7 @@ import com.imooc.controller.viewObject.UserVO;
 import com.imooc.error.BusinessException;
 import com.imooc.error.EmBusinessError;
 import com.imooc.response.CommonReturnType;
+import com.imooc.service.EmailService;
 import com.imooc.service.UserService;
 import com.imooc.service.model.UserModel;
 import com.imooc.util.ConvertUtil;
@@ -23,11 +24,12 @@ import java.util.Random;
 public class UserController {
 
     private final UserService userService;
-
+    private final EmailService emailService;
     private final HttpSession session;
 
-    public UserController(UserService userService, HttpSession httpSession) {
+    public UserController(UserService userService, EmailService emailService, HttpSession httpSession) {
         this.userService = userService;
+        this.emailService = emailService;
         this.session = httpSession;
     }
 
@@ -60,13 +62,13 @@ public class UserController {
     @PostMapping("register")
     public CommonReturnType register(UserModel userModel, @RequestParam("otpCode")String otpCode) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
         //验证码
-        String codeInSession = (String) session.getAttribute(userModel.getTelephone());
+        String codeInSession = (String) session.getAttribute(userModel.getEmail());
         if(!StringUtils.equals(otpCode, codeInSession)){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR, "验证码不正确");
         }
         //用户注册流程
         //设置用户注册方式
-        userModel.setRegisterMod("byphone");
+        userModel.setRegisterMod("byEmail");
 
         userService.register(userModel);
 
@@ -75,23 +77,25 @@ public class UserController {
 
     /**
      * 获取验证码
-     * @param telephone 要验证的手机号码
+     * @param email 要验证的邮箱
      * @return  otp验证码
      */
     @PostMapping("getotp")
-    public CommonReturnType getOtp(@RequestParam("telephone") String telephone) {
+    public CommonReturnType getOtp(@RequestParam("email") String email) {
         //生成OTP验证码
         Random random = new Random();
-        StringBuilder otpCode = new StringBuilder();
+        StringBuilder otpCodeSB = new StringBuilder();
         for (int i = 0; i < 6; i++) {
-            otpCode.append(random.nextInt(10));
+            otpCodeSB.append(random.nextInt(10));
         }
 
-        //绑定手机号与otpCode
-        session.setAttribute(telephone, otpCode.toString());
+        //绑定email与otpCode
+        String otpCode = otpCodeSB.toString();
+        session.setAttribute(email, otpCode);
 
-        //省略发送到手机，暂由控制台接收
-        System.out.println("telephone:" + telephone + " & otpCode:" + otpCode.toString());
+        //发送到该邮箱
+//        System.out.println("telephone:" + email + " & otpCode:" + otpCode.toString());
+        emailService.sendOtp(email, otpCode);
 
         return new CommonReturnType(null);
     }

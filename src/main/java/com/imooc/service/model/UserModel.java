@@ -9,6 +9,15 @@ public class UserModel {
     private String registerMod;
     private String thirdPartId;
     private String encryptPassword;
+    private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getEncryptPassword() {
         return encryptPassword;

@@ -5,7 +5,16 @@ public class UserVO {
     private String name;
     private Byte gender;
     private Integer age;
-    private String telphone;
+    private String telephone;
+    private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getId() {
         return id;
@@ -39,11 +48,11 @@ public class UserVO {
         this.age = age;
     }
 
-    public String getTelphone() {
-        return telphone;
+    public String getTelephone() {
+        return telephone;
     }
 
-    public void setTelphone(String telphone) {
-        this.telphone = telphone;
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
 }
