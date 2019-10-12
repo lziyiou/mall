@@ -12,3 +12,14 @@ spring:
     username: 787492833@qq.com
     password: ayuoijnfponsbebi
 
+logging:
+  level:
+    root: warn
+    com.imooc.mapper: trace
+  pattern:
+    console: '%p%m%n'
+
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: uuid

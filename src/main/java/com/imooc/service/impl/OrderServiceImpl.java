@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -55,7 +54,6 @@ public class OrderServiceImpl implements OrderService {
 
         //订单入库
         OrderModel orderModel = new OrderModel();
-        orderModel.setId(UUID.randomUUID().toString());
         orderModel.setUserId(userId);
         orderModel.setItemId(itemId);
         orderModel.setAmount(amount);
@@ -63,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
         orderModel.setOrderAmount(itemModel.getPrice().multiply(new BigDecimal(orderModel.getAmount())));
 
         Order order = ConvertUtil.convertTFromPojo(Order.class, orderModel);
-        orderMapper.insertSelective(order);
+        orderMapper.insert(order);
 
         //返回前端
 

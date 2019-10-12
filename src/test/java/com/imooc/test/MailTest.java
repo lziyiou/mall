@@ -1,4 +1,4 @@
-package com.imooc.mail.test;
+package com.imooc.test;
 
 import com.imooc.service.EmailService;
 import org.junit.Test;
@@ -16,6 +16,6 @@ public class MailTest {
 
     @Test
     public void test(){
-        emailService.sendOtp("lziyiou@gmail.com", "562324");
+        emailService.sendOtp("787492833@qq.com", "562324");
     }
 }

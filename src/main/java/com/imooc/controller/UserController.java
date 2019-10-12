@@ -35,19 +35,19 @@ public class UserController {
 
     /**
      * 用户登录
-     * @param telephone 手机号码参数
+     * @param email 邮箱参数
      * @param password  密码参数
      * @return  CommonReturnType
      */
     @PostMapping("login")
-    public CommonReturnType login(@RequestParam("telephone")String telephone,@RequestParam("password")String password) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
+    public CommonReturnType login(@RequestParam("email")String email,@RequestParam("password")String password) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
         //入参校验
-        if(StringUtils.isEmpty(telephone)||StringUtils.isEmpty(password)){
+        if(StringUtils.isEmpty(email)||StringUtils.isEmpty(password)){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }
 
         //用户登录服务
-        UserVO userVo = userService.login(telephone, password);
+        UserVO userVo = userService.login(email, password);
         session.setAttribute("user", userVo);
 
         return new CommonReturnType(null);

@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserModel getUserById(String id) {
-        User user = userMapper.selectByPrimaryKey(id);
+        User user = userMapper.selectById(id);
         if (user == null) {
             return null;
         }
@@ -59,16 +59,16 @@ public class UserServiceImpl implements UserService {
 
 //        User user = convertUserFromUserModel(userModel);
         User user = ConvertUtil.convertTFromPojo(User.class, userModel);
-        userMapper.insertSelective(user);
+        userMapper.insert(user);
 
         UserPassword userPassword = convertUserPasswordFromUserModel(userModel);
-        userPasswordMapper.insertSelective(userPassword);
+        userPasswordMapper.insert(userPassword);
 
     }
 
     @Override
-    public UserVO login(String telephone, String encryptPassword) throws BusinessException, NoSuchAlgorithmException {
-        User user = userMapper.selectByTelephone(telephone);
+    public UserVO login(String email, String encryptPassword) throws BusinessException, NoSuchAlgorithmException {
+        User user = userMapper.selectByEmail(email);
         if (user == null) {
             throw new BusinessException(EmBusinessError.USER_LOGIN_FAIL);
         }
@@ -100,7 +100,6 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         UserPassword userPassword = new UserPassword();
-        userPassword.setId(UUID.randomUUID().toString());
         userPassword.setUserId(userModel.getId());
         userPassword.setEncryptPassword(userModel.getEncryptPassword());
         return userPassword;

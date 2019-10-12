@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,17 +40,14 @@ public class ItemServiceImpl implements ItemService {
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }
 
-        //设置商品id
-        itemModel.setId(UUID.randomUUID().toString());
-
         //获取item, itemStock对象
 //        Item item = convertItemFromItemModel(itemModel);
         Item item = ConvertUtil.convertTFromPojo(Item.class, itemModel);
         ItemStock itemStock = convertItemStockFromItemModel(itemModel);
 
         //写入数据库
-        itemMapper.insertSelective(item);
-        itemStockMapper.insertSelective(itemStock);
+        itemMapper.insert(item);
+        itemStockMapper.insert(itemStock);
 
         return getItemById(itemModel.getId());
     }
@@ -82,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public ItemModel getItemById(String id) {
-        Item item = itemMapper.selectByPrimaryKey(id);
+        Item item = itemMapper.selectById(id);
         if (item == null) {
             return null;
         }
@@ -144,7 +140,6 @@ public class ItemServiceImpl implements ItemService {
             return null;
         }
         ItemStock itemStock = new ItemStock();
-        itemStock.setId(UUID.randomUUID().toString());
         itemStock.setItemId(itemModel.getId());
         itemStock.setStock(itemModel.getStock());
         return itemStock;

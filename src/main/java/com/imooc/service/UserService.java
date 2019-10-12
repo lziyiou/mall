@@ -15,9 +15,9 @@ public interface UserService {
 
     /**
      * 用户登录服务
-     * @param telephone 用户注册手机
+     * @param email 用户注册手机
      * @param encryptPassword  用户加密后的密码
-     * @throws BusinessException
+     * @throws BusinessException    登录异常
      */
-    UserVO login(String telephone, String encryptPassword) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException;
+    UserVO login(String email, String encryptPassword) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException;
 }
