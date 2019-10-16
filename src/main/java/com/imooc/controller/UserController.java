@@ -8,13 +8,14 @@ import com.imooc.service.EmailService;
 import com.imooc.service.UserService;
 import com.imooc.service.model.UserModel;
 import com.imooc.util.ConvertUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.thymeleaf.util.StringUtils;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
@@ -23,15 +24,12 @@ import java.util.Random;
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserService userService;
-    private final EmailService emailService;
-    private final HttpSession session;
-
-    public UserController(UserService userService, EmailService emailService, HttpSession httpSession) {
-        this.userService = userService;
-        this.emailService = emailService;
-        this.session = httpSession;
-    }
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private HttpServletRequest request;
 
     /**
      * 用户登录
@@ -48,7 +46,7 @@ public class UserController {
 
         //用户登录服务
         UserVO userVo = userService.login(email, password);
-        session.setAttribute("user", userVo);
+        request.getSession().setAttribute("user", userVo);
 
         return new CommonReturnType(null);
     }
@@ -62,7 +60,7 @@ public class UserController {
     @PostMapping("register")
     public CommonReturnType register(UserModel userModel, @RequestParam("otpCode")String otpCode) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
         //验证码
-        String codeInSession = (String) session.getAttribute(userModel.getEmail());
+        String codeInSession = (String) request.getSession().getAttribute(userModel.getEmail());
         if(!StringUtils.equals(otpCode, codeInSession)){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR, "验证码不正确");
         }
@@ -91,7 +89,7 @@ public class UserController {
 
         //绑定email与otpCode
         String otpCode = otpCodeSB.toString();
-        session.setAttribute(email, otpCode);
+        request.getSession().setAttribute(email, otpCode);
 
         //发送到该邮箱
 //        System.out.println("telephone:" + email + " & otpCode:" + otpCode.toString());

@@ -31,4 +31,9 @@ public class RegTest {
         userService.register(userModel);
     }
 
+    @Test
+    public void testLambda() {
+
+    }
+
 }
