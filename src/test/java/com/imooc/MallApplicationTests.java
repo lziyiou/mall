@@ -1,8 +1,7 @@
 package com.imooc;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.imooc.bean.Promo;
-import com.imooc.mapper.PromoMapper;
+import com.imooc.service.ItemService;
+import com.imooc.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +13,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class MallApplicationTests {
 
     @Autowired
-    private PromoMapper promoMapper;
+    private UserService userService;
+
+    @Autowired
+    private ItemService itemService;
 
     @Test
     public void test() {
-        QueryWrapper<Promo> wrapper = new QueryWrapper<>();
-        wrapper.select("start");
-        Promo promo = promoMapper.selectOne(wrapper);
-        System.out.println("promo = " + promo);
+        itemService.listItem().forEach(System.out::println);
     }
 
 }

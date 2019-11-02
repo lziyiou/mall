@@ -1,5 +1,6 @@
 package com.imooc.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.imooc.bean.Item;
 import com.imooc.bean.ItemStock;
 import com.imooc.error.BusinessException;
@@ -65,9 +66,12 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public List<ItemModel> listItem() {
-        List<Item> itemModels = itemMapper.selAll();
-        return itemModels.stream().map(item -> {
-            ItemStock itemStock = itemStockMapper.selectByItemId(item.getId());
+//        List<Item> items = itemMapper.selAll();
+        List<Item> items = itemMapper.selectList(new QueryWrapper<Item>().orderByDesc("sales"));
+
+        return items.stream().map(item -> {
+//            ItemStock itemStock = itemStockMapper.selectByItemId(item.getId());
+            ItemStock itemStock = itemStockMapper.selectOne(new QueryWrapper<ItemStock>().eq("item_id", item.getId()));
             return convertFromDataObject(item, itemStock);
 //            return ConvertUtil.convertTFromPojo(item, itemStock);
         }).collect(Collectors.toList());
@@ -91,7 +95,7 @@ public class ItemServiceImpl implements ItemService {
             return null;
         }
         //获得库存数量
-        ItemStock itemStock = itemStockMapper.selectByItemId(id);
+        ItemStock itemStock = itemStockMapper.selectOne(new QueryWrapper<ItemStock>().eq("item_id", item.getId()));
 
         ItemModel itemModel = convertFromDataObject(item, itemStock);
         // 获取活动商品信息
@@ -107,6 +111,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public boolean decreaseStock(String itemId, Integer amount) {
         int affectedRow = itemStockMapper.decreaseStock(itemId, amount);
+
         return affectedRow > 0;
     }
 

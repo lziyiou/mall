@@ -1,5 +1,6 @@
 package com.imooc.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.imooc.bean.User;
 import com.imooc.bean.UserPassword;
 import com.imooc.controller.viewObject.UserVO;
@@ -39,7 +40,8 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return null;
         }
-        UserPassword userPassword = userPasswordMapper.selectByUserId(user.getId());
+
+        UserPassword userPassword = userPasswordMapper.selectOne(new QueryWrapper<UserPassword>().eq("user_id", user.getId()));
 
         return convertFromDataObject(user, userPassword);
     }
@@ -68,11 +70,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserVO login(String email, String encryptPassword) throws BusinessException, NoSuchAlgorithmException {
-        User user = userMapper.selectByEmail(email);
+//        User user = userMapper.selectByEmail(email);
+        User user = userMapper.selectOne(new QueryWrapper<User>().eq("email", email));
         if (user == null) {
             throw new BusinessException(EmBusinessError.USER_LOGIN_FAIL);
         }
-        UserPassword userPassword = userPasswordMapper.selectByUserId((user.getId()));
+//        UserPassword userPassword = userPasswordMapper.selectByUserId((user.getId()));
+        UserPassword userPassword = userPasswordMapper.selectOne(new QueryWrapper<UserPassword>().eq("user_id", user.getId()));
 
         UserModel userModel = convertFromDataObject(user, userPassword);
         if (!StringUtils.equals(EncoderByMd5(encryptPassword), userModel.getEncryptPassword())) {
