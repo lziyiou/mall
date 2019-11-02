@@ -3,7 +3,9 @@ package com.imooc.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.imooc.bean.ItemStock;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.stereotype.Component;
 
+@Component
 public interface ItemStockMapper extends BaseMapper<ItemStock> {
 
     //    @Select("select * from item_stock where item_id = #{itemId}")

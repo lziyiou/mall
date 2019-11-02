@@ -1,7 +1,6 @@
 package com.imooc.service.impl;
 
 import com.imooc.service.EmailService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -13,8 +12,11 @@ public class EmailServiceImpl implements EmailService {
     @Value("${spring.mail.username}")
     private String from;
 
-    @Autowired
-    private MailSender mailSender;
+    private final MailSender mailSender;
+
+    public EmailServiceImpl(MailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     @Override
     public void sendOtp(String to, String otp) {

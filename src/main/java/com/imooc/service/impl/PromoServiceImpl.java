@@ -1,25 +1,27 @@
 package com.imooc.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.imooc.bean.Promo;
 import com.imooc.mapper.PromoMapper;
 import com.imooc.service.PromoService;
 import com.imooc.service.model.PromoModel;
 import com.imooc.util.ConvertUtil;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PromoServiceImpl implements PromoService {
 
-    @Autowired
-    private PromoMapper promoMapper;
+    private final PromoMapper promoMapper;
+
+    public PromoServiceImpl(PromoMapper promoMapper) {
+        this.promoMapper = promoMapper;
+    }
 
     @Override
     public PromoModel getPromoByItemId(String itemId) {
-//        Promo promo = promoMapper.selByItemId(itemId);
-        Promo promo = promoMapper.selectOne(new QueryWrapper<Promo>().eq("item_id", itemId));
+
+        Promo promo = promoMapper.selectOne(Wrappers.<Promo>lambdaQuery().eq(Promo::getItemId, itemId));
         PromoModel promoModel = convertFromPromo(promo);
 
         // 判断活动状态

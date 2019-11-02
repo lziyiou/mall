@@ -1,6 +1,6 @@
 package com.imooc.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.imooc.bean.User;
 import com.imooc.bean.UserPassword;
 import com.imooc.controller.viewObject.UserVO;
@@ -25,13 +25,12 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserMapper userMapper;
-
     private final UserPasswordMapper userPasswordMapper;
+    private UserMapper userMapper;
 
-    public UserServiceImpl(UserMapper userMapper, UserPasswordMapper userPasswordMapper) {
-        this.userMapper = userMapper;
+    public UserServiceImpl(UserPasswordMapper userPasswordMapper, UserMapper userMapper) {
         this.userPasswordMapper = userPasswordMapper;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -41,7 +40,7 @@ public class UserServiceImpl implements UserService {
             return null;
         }
 
-        UserPassword userPassword = userPasswordMapper.selectOne(new QueryWrapper<UserPassword>().eq("user_id", user.getId()));
+        UserPassword userPassword = userPasswordMapper.selectOne(Wrappers.<UserPassword>lambdaQuery().eq(UserPassword::getUserId, user.getId()));
 
         return convertFromDataObject(user, userPassword);
     }
@@ -70,13 +69,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserVO login(String email, String encryptPassword) throws BusinessException, NoSuchAlgorithmException {
-//        User user = userMapper.selectByEmail(email);
-        User user = userMapper.selectOne(new QueryWrapper<User>().eq("email", email));
+        User user = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getEmail, email));
+
         if (user == null) {
             throw new BusinessException(EmBusinessError.USER_LOGIN_FAIL);
         }
-//        UserPassword userPassword = userPasswordMapper.selectByUserId((user.getId()));
-        UserPassword userPassword = userPasswordMapper.selectOne(new QueryWrapper<UserPassword>().eq("user_id", user.getId()));
+        UserPassword userPassword = userPasswordMapper.selectOne(Wrappers.<UserPassword>lambdaQuery().eq(UserPassword::getUserId, user.getId()));
 
         UserModel userModel = convertFromDataObject(user, userPassword);
         if (!StringUtils.equals(EncoderByMd5(encryptPassword), userModel.getEncryptPassword())) {
@@ -85,17 +83,6 @@ public class UserServiceImpl implements UserService {
 
 //        return convertUserVoFromUserModel(userModel);
         return ConvertUtil.convertTFromPojo(UserVO.class, userModel);
-    }
-
-    @Deprecated
-    private UserVO convertUserVoFromUserModel(UserModel userModel) {
-        //用户为空，返回空
-        if (userModel == null) {
-            return null;
-        }
-        UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(userModel, userVO);
-        return userVO;
     }
 
     private UserPassword convertUserPasswordFromUserModel(UserModel userModel) {
@@ -107,17 +94,6 @@ public class UserServiceImpl implements UserService {
         userPassword.setUserId(userModel.getId());
         userPassword.setEncryptPassword(userModel.getEncryptPassword());
         return userPassword;
-    }
-
-    @Deprecated
-    private User convertUserFromUserModel(UserModel userModel) {
-        //用户为空，返回空
-        if (userModel == null) {
-            return null;
-        }
-        User user = new User();
-        BeanUtils.copyProperties(userModel, user);
-        return user;
     }
 
     private UserModel convertFromDataObject(User user, UserPassword userPassword) {
